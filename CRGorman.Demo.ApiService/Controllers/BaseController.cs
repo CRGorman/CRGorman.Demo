@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace CRGorman.Demo.ApiService.Controllers
+namespace CRGorman.Demo.ApiService.Controllers;
+
+[ApiController]
+public class BaseController : ControllerBase
 {
-    public class BaseController : Controller
-    {
-        public IActionResult Index()
-        {
-            return View();
-        }
-    }
 }

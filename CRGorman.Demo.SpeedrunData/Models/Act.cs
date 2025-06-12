@@ -14,6 +14,8 @@ namespace CRGorman.Demo.SpeedrunData.Models
 
         public virtual Game Game { get; set; }
 
+        public int ActNumber { get; set; }
+
         public string Name { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;

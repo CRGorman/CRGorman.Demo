@@ -1,29 +1,44 @@
+using CRGorman.Demo.ViewModels;
+
 namespace CRGorman.Demo.Web;
 
 public class GuideApiClient(HttpClient httpClient)
 {
-    public async Task<WeatherForecast[]> GetWeatherAsync(int maxItems = 10, CancellationToken cancellationToken = default)
+
+    public async Task<GameDto> GetGameAsync(int? gameId, CancellationToken cancellationToken = default)
     {
-        List<WeatherForecast>? forecasts = null;
-
-        await foreach (var forecast in httpClient.GetFromJsonAsAsyncEnumerable<WeatherForecast>("/weatherforecast", cancellationToken))
+        
+        GameDto? game = null;
+        try
         {
-            if (forecasts?.Count >= maxItems)
-            {
-                break;
-            }
-            if (forecast is not null)
-            {
-                forecasts ??= [];
-                forecasts.Add(forecast);
-            }
+            var jsonResponse = await httpClient.GetFromJsonAsync<GameDto>($"/game/{gameId}", cancellationToken);
+            game = jsonResponse;
         }
+        catch (Exception ex)
+        {
 
-        return forecasts?.ToArray() ?? [];
+        }
+        return game;
     }
-}
 
-public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+
+    public async Task<ActDto> GetActAsync(int? actId, CancellationToken cancellationToken = default)
+    {
+        ActDto? act = null;
+
+        var jsonResponse = await httpClient.GetFromJsonAsync<ActDto>($"/act/{actId}", cancellationToken);
+        act = jsonResponse;
+
+        return act;
+    }
+
+    public async Task<MissionDto> GetMissionAsync(int? missionId, CancellationToken cancellationToken = default)
+    {
+        MissionDto? mission = null;
+
+        var jsonResponse = await httpClient.GetFromJsonAsync<MissionDto>($"/mission/{missionId}", cancellationToken);
+        mission = jsonResponse;
+
+        return mission;
+    }
 }

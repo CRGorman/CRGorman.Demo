@@ -19,7 +19,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CRGorman.Demo.ApiService\CRGorman.Demo.ApiService.csproj" />
     <ProjectReference Include="..\CRGorman.Demo.AppHost\CRGorman.Demo.AppHost.csproj" />
+    <ProjectReference Include="..\CRGorman.Demo.MigrationService\CRGorman.Demo.MigrationService.csproj" />
+    <ProjectReference Include="..\CRGorman.Demo.ServiceDefaults\CRGorman.Demo.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\CRGorman.Demo.SpeedrunData\CRGorman.Demo.SpeedrunData.csproj" />
+    <ProjectReference Include="..\CRGorman.Demo.ViewModels\CRGorman.Demo.ViewModels.csproj" />
+    <ProjectReference Include="..\CRGorman.Demo.Web\CRGorman.Demo.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

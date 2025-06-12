@@ -48,12 +48,14 @@ public class Worker(IServiceProvider serviceProvider,
         {
             Name = "Descent: Freespace - The Great War",
             Description = "Starting somewhere",
+            VanityURL = "Freespace",
             Acts = new()
             {
                 new()
                 {
                     Name = "Darkness Rising",
-                    Description = "The slog of a 14 year long war comes to a close at the hands of the destroyers.",
+                    ActNumber = 1,
+                    Description = "The slog of a 14 year long war comes to a close with the Ross-128 incident.",
                     Missions = new List<Mission>()
                     {
                         new()
@@ -61,6 +63,82 @@ public class Worker(IServiceProvider serviceProvider,
                             FileName = "SM1-01A",
                             Name = "Eve of Destruction",
                             Description = "Thirteen 35% PVF Anubis fighters pick a fight with two fresh GTF Apollos and a stationary GTF Fenris."
+                        }
+                    }
+                },
+            }
+        };
+
+        Game silentThreat = new()
+        {
+            Name = "Descent: Freespace - Silent Threat",
+            Description = "Boring...",
+            VanityURL = "SilentThreat",
+            Acts = new()
+            {
+                new()
+                {
+                    Name = "Hades Rebellion",
+                    ActNumber = 1,
+                    Description = "While the Shivans reak havoc upon the galaxy, rogue elements of the GTI seek to disrupt the shakey Terran-Vasudan alliance.",
+                    Missions = new List<Mission>()
+                    {
+                        new()
+                        {
+                            FileName = "MD-01",
+                            Name = "Silence All Voices",
+                            Description = ""
+                        }
+                    }
+                },
+            }
+        };
+
+
+        Game operationTemplar = new()
+        {
+            Name = "Freespace 2 - Operation Templar",
+            Description = "Hammer the Hammer of Light",
+            VanityURL = "OperationTemplar",
+            Acts = new()
+            {
+                new()
+                {
+                    Name = "Operation Templar",
+                    ActNumber = 1,
+                    Description = "As the end of the Lucifier conflict has passed, the GTA seeks to solidify their alliance with the PVE by eliminating the last refuges of the Hammer of Light.",
+                    Missions = new List<Mission>()
+                    {
+                        new()
+                        {
+                            FileName = "Templar-01",
+                            Name = "Bringing The Hammer Down",
+                            Description = ""
+                        }
+                    }
+                },
+            }
+        };
+
+        Game freespace2 = new()
+        {
+            Name = "Freespace 2",
+            Description = "The Capella Conflict",
+            VanityURL = "Freespace2",
+            Acts = new()
+            {
+                new()
+                {
+                    Name = "The Neo-Terran Front",
+                    ActNumber = 1,
+                    Description = "32 Years after the end of the great war, elements of the former GTI rebel against the newly forged Galactic Terran Vasudan Alliance while a dormant enemy lies beyond the Capella system.",
+                    Missions = new List<Mission>()
+                    {
+                        new()
+                        {
+                            FileName = "SM1-01",
+                            Name = "Surrender, Belisarius!",
+                            Description = ""
                         }
                     }
                 },
@@ -82,6 +160,9 @@ public class Worker(IServiceProvider serviceProvider,
                 // Seed the database
                 await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
                 await dbContext.Games.AddAsync(freespace, cancellationToken);
+                await dbContext.Games.AddAsync(silentThreat, cancellationToken);
+                await dbContext.Games.AddAsync(operationTemplar, cancellationToken);
+                await dbContext.Games.AddAsync(freespace2, cancellationToken);
                 await dbContext.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
             });

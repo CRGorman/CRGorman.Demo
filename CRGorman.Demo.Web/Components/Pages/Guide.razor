@@ -1,49 +1,99 @@
-﻿@page "/guide"
+﻿@page "/guide/{gameParam:regex(^[\\da-zA-Z]{{0,12}}$)}/{actParam:int?}/{missionParam:int?}"
+@using CRGorman.Demo.ViewModels
+@using CRGorman.Demo.Web.Data
 @attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 
-@inject GuideApiClient WeatherApi
+@inject TableOfContents ToC
+@inject GuideApiClient GuideApi
 
-<PageTitle>Weather</PageTitle>
-
-<h1>Descent: FreeSpace - The Great War</h1>
+<PageTitle>Freespace Speedrun Guide</PageTitle>
 
 <p>This component demonstrates showing data loaded from a backend API service.</p>
 
-@if (forecasts == null)
+@if (game == null || game.Id == 0)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th aria-label="Temperature in Celsius">Temp. (C)</th>
-                <th aria-label="Temperature in Farenheit">Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <h1>@game.Name</h1>
+    foreach (var act in game.Acts)
+    {
+        <h2>Act @act.ActNumber: @act.Name</h2>
+        foreach (var mission in missions)
+        {
+            <h3>@mission.FileName: @mission.Name</h3>
+            <div class="">
+                <div>@mission.Description</div>
+                <div>@mission.Loadout</div>
+                <div>@mission.Guide</div>
+                <div>@mission.Script</div>
+            </div>
+        }
+    }
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    [Parameter]
+    public string? gameParam { get; set; }
+
+    public int? gameId { get; set; }
+
+    [Parameter]
+    public int? actParam { get; set; }
+
+    public int? actId { get; set; }
+
+    [Parameter]
+    public string? missionParam { get; set; }
+
+    public int? missionId { get; set; }
+
+    private GameDto game = new();
+    private ActDto act = new();
+    private List<MissionDto> missions = new();
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await WeatherApi.GetWeatherAsync();
+        if (!string.IsNullOrWhiteSpace(gameParam))
+        {
+            //Is it a number?
+            if (int.TryParse(gameParam, out int pGameId))
+            {
+                gameId = pGameId;
+            }
+            else
+            {
+                gameId = ToC.MissionList.FirstOrDefault(x => x.VanityURL == gameParam)?.Id;
+            }
+        }
+
+        if (actParam.HasValue)
+        {
+            actId = ToC.MissionList.FirstOrDefault(x => x.Id == gameId)?.Acts.FirstOrDefault(x => x.ActNumber == actParam)?.Id;
+        }
+
+        if (!string.IsNullOrWhiteSpace(missionParam))
+        {
+            missionId = ToC.MissionList.FirstOrDefault(x => x.Id == gameId)?.Acts.FirstOrDefault(x => x.Id == actId)?.Missions.FirstOrDefault(x=> x.FileName == missionParam)?.Id;
+        }
+
+        if (missionId.HasValue)
+        {
+            missions.Add(await GuideApi.GetMissionAsync(missionId));
+        }
+        else if (actId.HasValue)
+        {
+            act = await GuideApi.GetActAsync(actId);
+        }
+        else if (gameId.HasValue)
+        {
+            game = await GuideApi.GetGameAsync(gameId);
+        }
+        else
+        {
+            game = null;
+        }
     }
 }

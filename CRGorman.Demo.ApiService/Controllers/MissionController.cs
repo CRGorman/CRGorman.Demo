@@ -1,83 +1,56 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CRGorman.Demo.ApiService.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
+using System.Threading.Tasks;
 
-namespace CRGorman.Demo.ApiService.Controllers
+namespace CRGorman.Demo.ApiService.Controllers;
+
+[Route("[controller]")]
+public class MissionController(SpeedrunService speedrunService) : BaseController
 {
-    public class MissionController : Controller
+    // GET: MissionController
+    [OutputCache]
+    [HttpGet]
+    public async Task<ActionResult> GetAsync(int? id)
     {
-        // GET: MissionController
-        public ActionResult Index()
+        if (id.HasValue)
         {
-            return View();
+            return Ok(await speedrunService.GetMission(id.Value));
         }
-
-        // GET: MissionController/Details/5
-        public ActionResult Details(int id)
+        else
         {
-            return View();
+            return Ok(await speedrunService.GetTableOfContentsAsync());
         }
+    }
 
-        // GET: MissionController/Create
-        public ActionResult Create()
+    // POST: MissionController/Create
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult Create(IFormCollection collection)
+    {
+        try
         {
-            return View();
+            return RedirectToAction(nameof(Index));
         }
-
-        // POST: MissionController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        catch
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return NotFound();
         }
+    }
 
-        // GET: MissionController/Edit/5
-        public ActionResult Edit(int id)
+    // POST: MissionController/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult Edit(int id, IFormCollection collection)
+    {
+        try
         {
-            return View();
+            return RedirectToAction(nameof(Index));
         }
-
-        // POST: MissionController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        catch
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: MissionController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: MissionController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return NotFound();
         }
     }
 }

@@ -1,4 +1,29 @@
-﻿<div class="top-row ps-4 navbar navbar-dark">
+﻿@using CRGorman.Demo.ViewModels
+@using CRGorman.Demo.Web.Data
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+
+@inject TableOfContents ToC
+@inject GuideApiClient GuideApi
+
+@code {
+    private string GenerateHref(string vanityURL, int actNumber = 0, string? FileName = "")
+    {
+        var url = $"guide/";
+        if (!string.IsNullOrWhiteSpace(vanityURL))
+        {
+            url += $"{vanityURL}/";
+            if (actNumber != 0)
+            {
+                url += $"{actNumber.ToString()}/";
+                url += !string.IsNullOrWhiteSpace(FileName) ? $"{FileName}/" : string.Empty;
+            }
+        }
+        return url;
+    }
+}
+
+<div class="top-row ps-6 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Freespace Speedrunning</a>
     </div>
@@ -8,38 +33,60 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="setup">
-                <span class="bi bi-play" aria-hidden="true"></span> Setup - Getting Started
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="guide/fs">
-                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> Descent: Freespace - The Great War
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="guide/st">
-                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> Descent: Freespace - Silent Threat
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="guide/ot">
-                <span class="bi bi-plus-square-fill" aria-hidden="true"></span> Freespace 2 - Operation Templar
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="guide/fs2">
-                <span class="bi bi-list-nested" aria-hidden="true"></span> Freespace 2
-            </NavLink>
-        </div>
+        <ul class="no-bullets">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="bi bi-house-door-fill" aria-hidden="true"></span> Home
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="setup">
+                    <span class="bi bi-play" aria-hidden="true"></span> Setup - Getting Started
+                </NavLink>
+            </li>
+            @foreach (var game in ToC.MissionList)
+            {
+                <li class="nav-item px-3">
+                    <a class="sidenav-link">
+                        <span class="bi bi-plus-square-fill" aria-hidden="true"></span>
+                    </a>
+                    <NavLink class="nav-link" href="@GenerateHref(game.VanityURL)" Match="NavLinkMatch.All">
+                        <!--TODO: Try  data-enhance-nav="true"-->
+                        @game.Name
+                    </NavLink>
+                    @if (game.Acts.Count > 1)
+                    {
+                        <ul>
+                            @foreach (var act in game.Acts)
+                            {
+                                <li>
+                                    <NavLink class="nav-link" href="@GenerateHref(game.VanityURL, act.ActNumber)" Match="NavLinkMatch.All">Act @act.ActNumber: @act.Name</NavLink>
+                                    <ul>
+                                        @foreach (var mission in act.Missions)
+                                        {
+                                            <li>
+                                                <NavLink class="nav-link" href="@GenerateHref(game.VanityURL, act.ActNumber, mission.FileName)" Match="NavLinkMatch.All">@mission.FileName: @mission.Name</NavLink>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <NavLink class="nav-link" href="@GenerateHref(game.VanityURL, game.Acts.First().ActNumber)" Match="NavLinkMatch.All">Act @game.Acts.First().ActNumber: @game.Acts.First().Name</NavLink>
+                        <ul>
+                            @foreach (var mission in game.Acts.First().Missions)
+                            {
+                                <li>
+                                    <NavLink class="nav-link" href="@GenerateHref(game.VanityURL, game.Acts.First().ActNumber, mission.FileName)" Match="NavLinkMatch.All">@mission.FileName: @mission.Name</NavLink>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </li>
+            }
+        </ul>
     </nav>
 </div>

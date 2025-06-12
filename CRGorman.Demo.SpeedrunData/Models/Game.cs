@@ -14,6 +14,9 @@ namespace CRGorman.Demo.SpeedrunData.Models
         public string Name { get; set; } = string.Empty;
 
         [Required]
+        public string VanityURL { get; set; } = string.Empty;
+
+        [Required]
         public string Description { get; set; } = string.Empty;
 
         [Required]
