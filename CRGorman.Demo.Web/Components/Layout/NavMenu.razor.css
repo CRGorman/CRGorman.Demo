@@ -17,11 +17,11 @@
 
 .top-row {
     min-height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+    background-color: var(--bs-body-bg);
 }
 
 .navbar-brand {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
 }
 
 .bi {
@@ -29,8 +29,7 @@
     position: relative;
     width: 1.25rem;
     height: 1.25rem;
-    margin-right: 0.75rem;
-    top: -1px;
+    margin-right: 0.75rem;    
     background-size: cover;
 }
 
@@ -47,7 +46,7 @@
 }
 
 .nav-item {
-    font-size: 0.9rem;
+    font-size: 1.25rem;
     padding-bottom: 0.5rem;
 }
 
@@ -62,10 +61,7 @@
     .nav-item ::deep a {
         color: rgb(var(--link) / 0.6);
         border: 4px solid rgb(var(--bs-body-bg));
-        height: 3rem;
         display: flex;
-        align-items: center;
-        line-height: 3rem;
     }
 
         .nav-item ::deep a.active {
@@ -82,6 +78,7 @@
 
 .nav-scrollable {
     display: none;
+    border-right: 1px solid 
 }
 
 .navbar-toggler:checked ~ .nav-scrollable {

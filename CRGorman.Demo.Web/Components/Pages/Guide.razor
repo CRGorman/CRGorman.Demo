@@ -1,4 +1,4 @@
-﻿@page "/guide/{gameParam:regex(^[\\da-zA-Z]{{0,12}}$)}/{actParam:int?}/{missionParam:int?}"
+﻿@page "/guide/{gameParam:regex(^[\\da-zA-Z]{{0,12}}$)}/{actParam:int?}/{missionParam:nonfile?}"
 @using CRGorman.Demo.ViewModels
 @using CRGorman.Demo.Web.Data
 @attribute [StreamRendering(true)]
@@ -18,10 +18,10 @@
 else
 {
     <h1>@game.Name</h1>
-    foreach (var act in game.Acts)
+    foreach (var act in game.Acts.Where(x => x.Id == actId || actId == null))
     {
         <h2>Act @act.ActNumber: @act.Name</h2>
-        foreach (var mission in missions)
+        foreach (var mission in act.Missions.Where(x => x.Id == missionId || missionId == null))
         {
             <h3>@mission.FileName: @mission.Name</h3>
             <div class="">
@@ -51,8 +51,6 @@ else
     public int? missionId { get; set; }
 
     private GameDto game = new();
-    private ActDto act = new();
-    private List<MissionDto> missions = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -76,18 +74,10 @@ else
 
         if (!string.IsNullOrWhiteSpace(missionParam))
         {
-            missionId = ToC.MissionList.FirstOrDefault(x => x.Id == gameId)?.Acts.FirstOrDefault(x => x.Id == actId)?.Missions.FirstOrDefault(x=> x.FileName == missionParam)?.Id;
+            missionId = ToC.MissionList.FirstOrDefault(x => x.Id == gameId)?.Acts.FirstOrDefault(x => x.Id == actId)?.Missions.FirstOrDefault(x => x.FileName == missionParam)?.Id;
         }
 
-        if (missionId.HasValue)
-        {
-            missions.Add(await GuideApi.GetMissionAsync(missionId));
-        }
-        else if (actId.HasValue)
-        {
-            act = await GuideApi.GetActAsync(actId);
-        }
-        else if (gameId.HasValue)
+        if (gameId.HasValue)
         {
             game = await GuideApi.GetGameAsync(gameId);
         }

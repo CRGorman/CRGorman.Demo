@@ -7,7 +7,7 @@ namespace CRGorman.Demo.ApiService.Controllers;
 public class ActController(SpeedrunService speedrunService) : BaseController
 {
     // GET: Act/5
-    [HttpGet]
+    [HttpGet("{id}")]
     public async Task<ActionResult> GetAsync(int id)
     {
         return Ok(await speedrunService.GetAct(id));

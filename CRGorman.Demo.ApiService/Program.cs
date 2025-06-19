@@ -1,5 +1,6 @@
 using AutoMapper;
 using CRGorman.Demo.ApiService;
+using CRGorman.Demo.ApiService.Hubs;
 using CRGorman.Demo.ApiService.Services;
 using CRGorman.Demo.SpeedrunData;
 using CRGorman.Demo.SpeedrunData.Models;
@@ -30,6 +31,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<SpeedrunService>();
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -40,10 +43,10 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.MapDefaultEndpoints();
 app.MapControllers();
+app.MapHub<LiveHub>("/livehub");
 
-app.UseSwaggerUI(options=> { options.SwaggerEndpoint("/openapi/v1.json", "OpenAPI V1"); });
+app.UseSwaggerUI(options => { options.SwaggerEndpoint("/openapi/v1.json", "OpenAPI V1"); });
 
 if (app.Environment.IsDevelopment())
 {

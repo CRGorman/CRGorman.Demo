@@ -1,0 +1,59 @@
+﻿@page "/live"
+
+@using Microsoft.AspNetCore.SignalR.Client
+@attribute [StreamRendering(true)]
+@attribute [OutputCache(Duration = 5)]
+
+@inject TableOfContents ToC
+@inject GuideApiClient GuideApi
+@inject HubConnection HubConnection
+
+<script src="/js/live.js"></script>
+
+<h3>Live</h3>
+<div>If I am live, the Twitch channel will be visible below, along with the current state of the run.</div>
+<div class="twitch-wrapper">
+    <div id="twitch-embed"></div>
+</div>
+<!-- Load the Twitch embed JavaScript file -->
+<script src="https://embed.twitch.tv/embed/v1.js"></script>
+
+<!-- Create a Twitch.Embed object that will render within the "twitch-embed" element -->
+<script type="text/javascript">
+    /*new Twitch.Embed("twitch-embed", { channel: "zeroserenity" });
+        */
+</script>
+
+<div id="mission-context" content="@mission">
+    <h3>@mission.FileName: @mission.Name</h3>
+    <div class="">
+        <div>@mission.Description</div>
+        <div>@mission.Loadout</div>
+        <div>@mission.Guide</div>
+        <div>@mission.Script</div>
+    </div>
+</div>
+
+@code {
+    MissionDto mission = new();
+
+    protected override void OnInitialized()
+    {
+        HubConnection.On<MissionDto>("LiveUpdate", async newMission =>
+        {            
+            try
+            {
+                await InvokeAsync(() => UpdateMissionData(newMission));
+            }
+            catch (Exception ex)
+            {
+            }
+        });
+    }
+
+    protected void UpdateMissionData(MissionDto newMission)
+    {
+        mission = newMission;
+        StateHasChanged();
+    }
+}

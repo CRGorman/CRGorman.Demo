@@ -1,6 +1,8 @@
 using CRGorman.Demo.Web;
 using CRGorman.Demo.Web.Components;
 using CRGorman.Demo.Web.Data;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +15,11 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddHttpClient<GuideApiClient>(client =>
-    {
-        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
-        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
-        client.BaseAddress = new("https+http://apiservice");
-    });
+{
+    // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
+    // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
+    client.BaseAddress = new("https+http://apiservice");
+});
 
 builder.Services.AddHttpClient<TableOfContents>(client =>
 {
@@ -25,6 +27,21 @@ builder.Services.AddHttpClient<TableOfContents>(client =>
     // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
     client.BaseAddress = new("https+http://apiservice");
 });
+
+#region HubBuilder
+var hubBuilder = new HubConnectionBuilder()
+      .WithUrl(new Uri("https+http://apiservice/livehub"))
+      .WithAutomaticReconnect();
+var url = builder.Configuration.GetValue<string>("services:apiservice:https:0");
+#endregion
+
+builder.Services.AddSingleton<HubConnection>(client =>
+{
+    return new HubConnectionBuilder()
+      .WithUrl(new Uri(url + "/livehub"))
+      .WithAutomaticReconnect()
+      .Build();
+}).AddServiceDiscovery();
 
 var app = builder.Build();
 

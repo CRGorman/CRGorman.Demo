@@ -48,6 +48,12 @@ namespace CRGorman.Demo.ApiService.Services
             return retVal;
         }
 
+        public async Task<MissionDto> GetMission(string missionFilename)
+        {
+            var retVal = mapper.Map<MissionDto>(await speedrunContext.Missions.FirstOrDefaultAsync(x => x.FileName == missionFilename));
+            return retVal;
+        }
+
         public async Task<MissionDto> GetMissionByActByGame(int gameId, int actNumber, string missionName)
         {
             var retVal = mapper.Map<MissionDto>(await speedrunContext.Missions.FirstOrDefaultAsync(x => x.FileName == missionName && x.Act.ActNumber == actNumber && x.Act.GameId == gameId));

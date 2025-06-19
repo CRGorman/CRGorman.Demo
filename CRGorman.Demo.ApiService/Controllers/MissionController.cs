@@ -11,7 +11,7 @@ public class MissionController(SpeedrunService speedrunService) : BaseController
 {
     // GET: MissionController
     [OutputCache]
-    [HttpGet]
+    [HttpGet("{id?}")]
     public async Task<ActionResult> GetAsync(int? id)
     {
         if (id.HasValue)
