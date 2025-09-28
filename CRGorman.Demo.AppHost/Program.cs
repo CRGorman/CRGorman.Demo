@@ -12,7 +12,9 @@ builder.AddProject<Projects.CRGorman_Demo_MigrationService>("migrations").WithRe
 
 var cache = builder.AddRedis("cache").WithRedisInsight();
 
-var apiService = builder.AddProject<Projects.CRGorman_Demo_ApiService>("apiservice").WithReference(db).WaitFor(db);
+var apiService = builder.AddProject<Projects.CRGorman_Demo_ApiService>("apiservice")
+    .WithReference(db).WaitFor(db)
+    .WithReference(cache).WaitFor(cache);
 apiService.WithCommand(
     "swagger-ui-docs",
     "Swagger UI",

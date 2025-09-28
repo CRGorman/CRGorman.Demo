@@ -32,7 +32,7 @@ builder.Services.AddHttpClient<TableOfContents>(client =>
 var hubBuilder = new HubConnectionBuilder()
       .WithUrl(new Uri("https+http://apiservice/livehub"))
       .WithAutomaticReconnect();
-var url = builder.Configuration.GetValue<string>("services:apiservice:https:0");
+var url = builder.Configuration.GetValue<string>("services:apiservice:https:0"); // We need to pull this as the hub builder does not recognize the base address settings. See: https://github.com/dotnet/aspire/issues/1356#issuecomment-1853158142
 #endregion
 
 builder.Services.AddSingleton<HubConnection>(client =>

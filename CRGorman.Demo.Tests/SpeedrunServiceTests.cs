@@ -15,6 +15,8 @@ public class SpeedrunServiceTests
     [TestMethod]
     public async Task LoadTableOfContents()
     {
-
+        //Arrange
+        //Act
+        //Assert
     }
 }

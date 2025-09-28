@@ -1,7 +1,6 @@
 ﻿@page "/live"
 
 @using Microsoft.AspNetCore.SignalR.Client
-@attribute [StreamRendering(true)]
 @attribute [OutputCache(Duration = 5)]
 
 @inject TableOfContents ToC
@@ -20,11 +19,10 @@
 
 <!-- Create a Twitch.Embed object that will render within the "twitch-embed" element -->
 <script type="text/javascript">
-    /*new Twitch.Embed("twitch-embed", { channel: "zeroserenity" });
-        */
+    new Twitch.Embed("twitch-embed", { channel: "zeroserenity" });
 </script>
 
-<div id="mission-context" content="@mission">
+<div id="mission-context">
     <h3>@mission.FileName: @mission.Name</h3>
     <div class="">
         <div>@mission.Description</div>
@@ -43,7 +41,7 @@
         {            
             try
             {
-                await InvokeAsync(() => UpdateMissionData(newMission));
+                //await InvokeAsync(() => UpdateMissionData(newMission));
             }
             catch (Exception ex)
             {

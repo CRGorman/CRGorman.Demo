@@ -23,8 +23,10 @@ builder.AddSqlServerDbContext<SpeedrunContext>(connectionName: "speedrun");
 
 #region Mapper Configurations
 //var mapperConfig = new MapperConfiguration(config => config.AddProfile<MapperProfile>());
-builder.Services.AddAutoMapper(typeof(MapperProfile));
+builder.Services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
 #endregion
+
+builder.AddRedisDistributedCache(connectionName: "cache");
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
